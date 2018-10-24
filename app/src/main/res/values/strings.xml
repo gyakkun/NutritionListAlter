@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">NutritionListAlter</string>
+    <string name="food_name">食物名称</string>
+</resources>
