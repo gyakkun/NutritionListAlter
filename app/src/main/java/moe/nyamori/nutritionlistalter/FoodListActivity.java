@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -30,10 +31,26 @@ public class FoodListActivity extends AppCompatActivity {
     private class FoodHolder extends RecyclerView.ViewHolder
     implements View.OnClickListener{
 
+        private Food mItemFood;
+        private TextView mItemCat;
+        private TextView mItemName;
+
         public FoodHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item_food,
                     parent,
                     false));
+
+            itemView.setOnClickListener(this);
+
+            mItemCat = (TextView) itemView.findViewById(R.id.item_cat);
+            mItemName = (TextView) itemView.findViewById(R.id.item_name);
+        }
+
+        public void bind(Food food){
+            mItemFood = food;
+
+            mItemCat.setText(mItemFood.getCat().substring(0,1));
+            mItemName.setText(mItemFood.getName());
         }
 
         @Override
