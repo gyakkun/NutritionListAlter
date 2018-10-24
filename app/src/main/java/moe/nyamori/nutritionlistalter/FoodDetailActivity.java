@@ -10,7 +10,16 @@ import java.util.UUID;
 public class FoodDetailActivity extends AppCompatActivity {
 
     private static final String EXTRA_FOOD_NAME = "moe.nyamori.nutritionlistalter.foodname";
+    private static final String ARG_FOOD_NAME = "food_name";
+    private Food mFood;
 
+
+    public FoodDetailActivity newInstance(String foodName){
+        mFood = FoodStore.get(FoodDetailActivity.this).getFood(foodName);
+        FoodDetailActivity activity = new FoodDetailActivity();
+
+        return activity;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
