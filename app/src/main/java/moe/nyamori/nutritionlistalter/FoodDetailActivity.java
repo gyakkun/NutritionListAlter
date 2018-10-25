@@ -10,10 +10,16 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class FoodDetailActivity extends AppCompatActivity {
@@ -26,14 +32,9 @@ public class FoodDetailActivity extends AppCompatActivity {
     private TextView mDetailFoodNutrition;
     private ImageButton mDetailStar;
     private ImageButton mDetailCart;
+    private ImageButton mBack;
+    private ListView mFunctionList;
 
-
-    public FoodDetailActivity newInstance(String foodName) {
-        mFood = FoodStore.get(FoodDetailActivity.this).getFood(foodName);
-        FoodDetailActivity activity = new FoodDetailActivity();
-
-        return activity;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,9 @@ public class FoodDetailActivity extends AppCompatActivity {
         mDetailFoodNutrition = (TextView) findViewById(R.id.detail_food_nutrition);
         mDetailStar = (ImageButton) findViewById(R.id.detail_star_button);
         mDetailCart = (ImageButton) findViewById(R.id.detail_shoppling_cart);
+        mBack = (ImageButton) findViewById(R.id.detail_back_button);
+        mFunctionList = (ListView) findViewById(R.id.detail_functions);
+
 
         String foodName = getIntent().getStringExtra(EXTRA_FOOD_NAME);
         mFood = FoodStore.get(getApplicationContext()).getFood(foodName);
@@ -55,11 +59,26 @@ public class FoodDetailActivity extends AppCompatActivity {
         mDetailFoodCat.setText(mFood.getCat());
         mDetailFoodNutrition.setText("富含 " + mFood.getNutrition());
 
-        if (mFood.isStar()) {
-            mDetailStar.setImageResource(R.drawable.ic_action_starred);
-        } else {
-            mDetailStar.setImageResource(R.drawable.ic_action_star_empty);
-        }
+        mDetailStar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mFood.isStar()) {
+                    mFood.setStar(false);
+                    Toast.makeText(getApplicationContext(),
+                            "已取消" + mFood.getName() + "收藏",
+
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    mFood.setStar(true);
+                    Toast.makeText(getApplicationContext(),
+                            mFood.getName() + "已收藏",
+                            Toast.LENGTH_SHORT).show();
+                }
+                updateStar();
+            }
+        });
+
+        updateStar();
 
         mDetailCart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +95,37 @@ public class FoodDetailActivity extends AppCompatActivity {
             }
         });
 
+        mBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
+        List<Map<String, String>> functionList = new ArrayList<>();
+        String[] info = new String[]{"分享信息", "不感兴趣", "查看更多信息", "出错反馈"};
+        for (int ctr = 0; ctr < 4; ctr++) {
+            Map<String, String> temp = new LinkedHashMap<>();
+            temp.put("MSG", info[ctr]);
+            functionList.add(temp);
+        }
+
+        SimpleAdapter simpleAdapter = new SimpleAdapter(this, functionList,
+                R.layout.list_item_function,
+                new String[]{"MSG"},
+                new int[]{R.id.function});
+
+        mFunctionList.setAdapter(simpleAdapter);
+
+
+    }
+
+    private void updateStar() {
+        if (mFood.isStar()) {
+            mDetailStar.setImageResource(R.drawable.ic_action_starred);
+        } else {
+            mDetailStar.setImageResource(R.drawable.ic_action_star_empty);
+        }
     }
 
 

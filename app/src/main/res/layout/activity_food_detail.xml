@@ -115,10 +115,10 @@
             android:id="@+id/detail_more_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="更多信息"
+            android:text="更多资料"
             android:layout_marginLeft="16dp"
             android:layout_marginBottom="16dp"
-            android:textSize="30sp"/>
+            android:textSize="18sp"/>
 
     </LinearLayout>
 
