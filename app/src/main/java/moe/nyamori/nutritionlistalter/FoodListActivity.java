@@ -1,5 +1,6 @@
 package moe.nyamori.nutritionlistalter;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -113,42 +114,64 @@ public class FoodListActivity extends AppCompatActivity {
 
 
         @Override
-        public abstract boolean onLongClick(View view) ;
+        public abstract boolean onLongClick(View view);
     }
 
-    private class AllFoodHolder extends FoodHolder{
+    private class AllFoodHolder extends FoodHolder {
 
         public AllFoodHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater, parent);
         }
 
         @Override
-        public boolean onLongClick(View view)
-            {
-                Toast.makeText(getApplicationContext(), "删除" + super.mItemFood.getName(), Toast.LENGTH_SHORT).show();
-                mAllFoods.remove(super.mItemFood);
-                updateUI();
+        public boolean onLongClick(View view) {
+            Toast.makeText(getApplicationContext(), "删除" + super.mItemFood.getName(), Toast.LENGTH_SHORT).show();
+            mAllFoods.remove(super.mItemFood);
+            updateUI();
 
-                return true;
-            }
+            return true;
+        }
 
     }
 
-    private class ShoppingListFoodHolder extends FoodHolder{
+    private class ShoppingListFoodHolder extends FoodHolder {
 
         public ShoppingListFoodHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater, parent);
         }
 
         @Override
-        public boolean onLongClick(View view)
-        {
-//            AlertDialog alertDialog = new AlertDialog()
+        public boolean onLongClick(View view) {
+            final String foodNameToRemove = super.mItemFood.getName();
+            AlertDialog dialog = new AlertDialog.Builder(FoodListActivity.this)
+                    .create();//创建对话框
+            dialog.setTitle("提示");//设置对话框标题
+            dialog.setMessage("确认从购物车中删除" + super.mItemFood.getName() + " 吗?");//设置文字显示内容
+            //分别设置三个button
+            dialog.setButton(DialogInterface.BUTTON_POSITIVE,
+                    "确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(FoodListActivity.this,
+                            foodNameToRemove + "已从购物车删除",
+                            Toast.LENGTH_SHORT).show();
+                    mShoppingListFoods.remove(FoodStore
+                            .get(getApplicationContext())
+                            .getFood(foodNameToRemove));
+                    updateUI();
+                    dialog.dismiss();//关闭对话框
+                }
+            });
 
-
-            mAllFoods.remove(super.mItemFood);
-            updateUI();
-
+            dialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+                    "取消",
+                    new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();//关闭对话框
+                }
+            });
+            dialog.show();//显示对话框
             return true;
         }
 
