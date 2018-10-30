@@ -1,5 +1,6 @@
 package moe.nyamori.nutritionlistalter;
 
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
@@ -16,9 +17,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.time.format.DecimalStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class FoodListActivity extends AppCompatActivity {
 
@@ -31,10 +35,15 @@ public class FoodListActivity extends AppCompatActivity {
     private boolean mIsShoppingListShown;
     private FloatingActionButton mFab;
 
+    private static final String STATIC_FILTER = "moe.nyamori.nutritionlistalter.foodstaticfilter";
+    private static final String DYNAMIC_FILTER = "moe.nyamori.nutritionlistalter.fooddynamicfilter";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_list);
+        EventBus.getDefault().register(this);
 
         mAllFoods = new ArrayList<>();
         mShoppingListFoods = new ArrayList<>();
@@ -61,6 +70,20 @@ public class FoodListActivity extends AppCompatActivity {
         });
 
         updateUI();
+
+        Intent intentBroadcast = new Intent(STATIC_FILTER);
+        Random r = new Random();
+        int randChoice = r.nextInt(10);
+        Bundle bundle = new Bundle();
+
+        bundle.putString("name", foodStore.get(randChoice).getName());
+        intentBroadcast.putExtras(bundle);
+
+        intentBroadcast.setComponent(new ComponentName(getPackageName(),
+                getPackageName() + ".foodstaticreceiver"));
+
+        sendBroadcast(intentBroadcast);
+
     }
 
     @Override

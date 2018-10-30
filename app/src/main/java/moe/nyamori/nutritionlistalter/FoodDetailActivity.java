@@ -1,7 +1,9 @@
 package moe.nyamori.nutritionlistalter;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +27,9 @@ import java.util.UUID;
 public class FoodDetailActivity extends AppCompatActivity {
 
     private static final String EXTRA_FOOD_NAME = "moe.nyamori.nutritionlistalter.foodname";
+    private static final String STATIC_FILTER = "moe.nyamori.nutritionlistalter.foodstaticfilter";
+    private static final String DYNAMIC_FILTER = "moe.nyamori.nutritionlistalter.fooddynamicfilter";
+
     private Food mFood;
     private RelativeLayout mDetailTop;
     private TextView mDetailFoodName;
@@ -34,6 +39,8 @@ public class FoodDetailActivity extends AppCompatActivity {
     private ImageButton mDetailCart;
     private ImageButton mBack;
     private ListView mFunctionList;
+
+    private BroadcastReceiver dynamicReceiver;
 
 
     @Override
@@ -117,7 +124,17 @@ public class FoodDetailActivity extends AppCompatActivity {
 
         mFunctionList.setAdapter(simpleAdapter);
 
+        IntentFilter dynamicFilter = new IntentFilter();
+        dynamicFilter.addAction(DYNAMIC_FILTER);
+        dynamicReceiver = new FoodDynamicReceiver();
+        registerReceiver(dynamicReceiver, dynamicFilter);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(dynamicReceiver);
     }
 
     private void updateStar() {
