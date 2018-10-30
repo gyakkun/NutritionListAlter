@@ -92,27 +92,30 @@ public class FoodDetailActivity extends AppCompatActivity {
         mDetailCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (FoodListActivity.addFoodToCart(mFood.getName())) {
 
-                    EventBus.getDefault().post(new MessageEvent(mFood.getName()));
+                EventBus.getDefault().post(new MessageEvent(mFood.getName()));
 
-                    Intent intentBroadcast = new Intent();
-                    intentBroadcast.setAction(DYNAMIC_FILTER);
+                Intent intentBroadcast = new Intent();
+                intentBroadcast.setAction(DYNAMIC_FILTER);
 
-                    Bundle bundle = new Bundle();
-                    bundle.putString("name", mFood.getName());
+                Bundle bundle = new Bundle();
+                bundle.putString("name", mFood.getName());
 
-                    intentBroadcast.putExtras(bundle);
-                    sendBroadcast(intentBroadcast);
+                intentBroadcast.putExtras(bundle);
+                sendBroadcast(intentBroadcast);
 
-                    Toast.makeText(getApplicationContext(),
-                            mFood.getName() + " 已经加入购物车",
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            mFood.getName() + " 已在购物车，不能重复添加",
-                            Toast.LENGTH_SHORT).show();
-                }
+//                if (FoodListActivity.addFoodToCart(mFood.getName())) {
+//
+//
+//
+//                    Toast.makeText(getApplicationContext(),
+//                            mFood.getName() + " 已经加入购物车",
+//                            Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(getApplicationContext(),
+//                            mFood.getName() + " 已在购物车，不能重复添加",
+//                            Toast.LENGTH_SHORT).show();
+//                }
             }
         });
 

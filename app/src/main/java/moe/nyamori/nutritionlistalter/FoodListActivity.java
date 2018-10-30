@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.time.format.DecimalStyle;
 import java.util.ArrayList;
@@ -45,7 +48,7 @@ public class FoodListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_list);
-//        EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);
 
         mAllFoods = new ArrayList<>();
         mShoppingListFoods = new ArrayList<>();
@@ -93,6 +96,12 @@ public class FoodListActivity extends AppCompatActivity {
 
         sendBroadcast(intentBroadcast);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -280,21 +289,33 @@ public class FoodListActivity extends AppCompatActivity {
         }
     }
 
-    public static boolean addFoodToCart(String foodName) {
+    private boolean addFoodToCart(String foodName) {
         //What should be the context here? : new FoodListActivity() / getApplicationContext()
         if (mShoppingListFoods.contains(FoodStore.get(new FoodListActivity()).getFood(foodName))) {
+            Toast.makeText(this,
+                    foodName + " 已在购物车，不能重复添加",
+                    Toast.LENGTH_SHORT).show();
             return false;
         }
-
+        Toast.makeText(getApplicationContext(),
+                foodName + " 已经加入购物车",
+                Toast.LENGTH_SHORT).show();
         mShoppingListFoods.add(FoodStore.get(new FoodListActivity()).getFood(foodName));
         return true;
     }
 
-    public static Intent newIntentToList(Context packageContext, boolean isShoppingListShown){
+    public static Intent newIntentToList(Context packageContext, boolean isShoppingListShown) {
         Intent intent = new Intent(packageContext, FoodListActivity.class);
 
         mIsShoppingListShown = isShoppingListShown;
 
         return intent;
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void Event(MessageEvent messageEvent) {
+        String foodName = messageEvent.getMessage();
+        addFoodToCart(foodName);
+    }
+
 }
