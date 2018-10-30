@@ -5,13 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
@@ -24,13 +21,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 public class FoodDetailActivity extends AppCompatActivity {
 
     private static final String EXTRA_FOOD_NAME = "moe.nyamori.nutritionlistalter.foodname";
-    private static final String STATIC_FILTER = "moe.nyamori.nutritionlistalter.foodstaticfilter";
     private static final String DYNAMIC_FILTER = "moe.nyamori.nutritionlistalter.fooddynamicfilter";
+    private static final String WIDGET_DYNAMIC_FILTER = "moe.nyamori.nutritionlistalter.widgetfooddynamicfilter";
 
     private Food mFood;
     private RelativeLayout mDetailTop;
@@ -43,6 +39,7 @@ public class FoodDetailActivity extends AppCompatActivity {
     private ListView mFunctionList;
 
     private BroadcastReceiver dynamicReceiver;
+    private BroadcastReceiver widgetDynamicReceiver;
 
 
     @Override
@@ -100,22 +97,16 @@ public class FoodDetailActivity extends AppCompatActivity {
 
                 Bundle bundle = new Bundle();
                 bundle.putString("name", mFood.getName());
+                bundle.putString("action", "已收藏");
 
                 intentBroadcast.putExtras(bundle);
                 sendBroadcast(intentBroadcast);
 
-//                if (FoodListActivity.addFoodToCart(mFood.getName())) {
-//
-//
-//
-//                    Toast.makeText(getApplicationContext(),
-//                            mFood.getName() + " 已经加入购物车",
-//                            Toast.LENGTH_SHORT).show();
-//                } else {
-//                    Toast.makeText(getApplicationContext(),
-//                            mFood.getName() + " 已在购物车，不能重复添加",
-//                            Toast.LENGTH_SHORT).show();
-//                }
+                Intent widgetDynamicBroadcastIntent = new Intent();
+                widgetDynamicBroadcastIntent.setAction(WIDGET_DYNAMIC_FILTER);
+
+                widgetDynamicBroadcastIntent.putExtras(bundle);
+                sendBroadcast(widgetDynamicBroadcastIntent);
             }
         });
 
@@ -146,12 +137,17 @@ public class FoodDetailActivity extends AppCompatActivity {
         dynamicReceiver = new FoodDynamicReceiver();
         registerReceiver(dynamicReceiver, dynamicFilter);
 
+        IntentFilter widgetDynamicFilter = new IntentFilter();
+        widgetDynamicFilter.addAction(WIDGET_DYNAMIC_FILTER);
+        widgetDynamicReceiver = new FoodDynamicReceiver();
+        registerReceiver(widgetDynamicReceiver, widgetDynamicFilter);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(dynamicReceiver);
+        unregisterReceiver(widgetDynamicReceiver);
     }
 
     private void updateStar() {

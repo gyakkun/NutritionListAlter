@@ -1,17 +1,14 @@
 package moe.nyamori.nutritionlistalter;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Message;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +20,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.time.format.DecimalStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -39,9 +35,7 @@ public class FoodListActivity extends AppCompatActivity {
     public static boolean mIsShoppingListShown;
     private FloatingActionButton mFab;
 
-    private static final String EXTRA_IS_SHOPPING_LIST_SHOWN = "moe.nyamori.nutritionlistalter.isshoppinglistshown";
     private static final String STATIC_FILTER = "moe.nyamori.nutritionlistalter.foodstaticfilter";
-    private static final String DYNAMIC_FILTER = "moe.nyamori.nutritionlistalter.fooddynamicfilter";
     private static final String WIDGET_STATIC_FILTER = "moe.nyamori.nutritionlistalter.widgetstaticfilter";
 
 
@@ -86,15 +80,18 @@ public class FoodListActivity extends AppCompatActivity {
 
         Intent intentBroadcast = new Intent(STATIC_FILTER);
         Random r = new Random();
-        int randChoice = r.nextInt(10);
+        int randChoice = r.nextInt(9);
         Bundle bundle = new Bundle();
 
         bundle.putString("name", foodStore.get(randChoice).getName());
+        bundle.putString("action", "今日推荐");
         intentBroadcast.putExtras(bundle);
 
-//        intentBroadcast.setComponent(new ComponentName(getPackageName(),
-//                getPackageName() + ".foodstaticreceiver"));
 
+        Intent widgetBroadcastIntent = new Intent(WIDGET_STATIC_FILTER);
+        widgetBroadcastIntent.putExtras(bundle);
+
+        sendBroadcast(widgetBroadcastIntent);
         sendBroadcast(intentBroadcast);
 
     }
@@ -115,6 +112,13 @@ public class FoodListActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         updateUI();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        updateUI();
+
     }
 
     private void updateUI() {

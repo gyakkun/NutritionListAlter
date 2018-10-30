@@ -28,16 +28,9 @@
         <receiver android:name=".FoodDynamicReceiver">
             <intent-filter>
                 <action android:name="moe.nyamori.nutritionlistalter.fooddynamicfilter" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".FoodWidget">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
+                <action android:name= "moe.nyamori.nutritionlistalter.widgetfooddynamicfilter"/>
 
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/food_widget_info" />
+            </intent-filter>
         </receiver>
         <receiver android:name=".FoodWidget">
             <intent-filter>
@@ -45,9 +38,10 @@
                 <action android:name="moe.nyamori.nutritionlistalter.widgetstaticfilter"/>
             </intent-filter>
 
+
             <meta-data
-                android:name="android.appwidget.AppWidgetProvider"
-                android:resource="@xml/food_widget_info"/>
+                android:name="android.appwidget.provider"
+                android:resource="@xml/food_widget_info" />
         </receiver>
     </application>
 

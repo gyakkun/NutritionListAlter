@@ -38,26 +38,7 @@ public class FoodWidget extends AppWidgetProvider {
 
 
         // Instruct the widget manager to update the widget
-//        appWidgetManager.updateAppWidget(appWidgetId, views);
         appWidgetManager.updateAppWidget(name, views);
-    }
-
-    @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        // There may be multiple widgets active, so update all of them
-        for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId);
-        }
-    }
-
-    @Override
-    public void onEnabled(Context context) {
-        // Enter relevant functionality for when the first widget is created
-    }
-
-    @Override
-    public void onDisabled(Context context) {
-        // Enter relevant functionality for when the last widget is disabled
     }
 
     @Override
@@ -67,9 +48,11 @@ public class FoodWidget extends AppWidgetProvider {
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
         Bundle bundle = intent.getExtras();
         String foodName = bundle.getString("name");
+        String action = bundle.getString("action");
+
         if(intent.getAction().equals(WIDGET_STATIC_FILTER)){
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.food_widget);
-            views.setTextViewText(R.id.widget_food_text, "今日推荐" + foodName);
+            views.setTextViewText(R.id.widget_food_text, action + foodName);
 
             Intent intentToDetail = FoodDetailActivity.newIntent(context, foodName);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,

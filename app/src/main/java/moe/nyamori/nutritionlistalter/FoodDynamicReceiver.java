@@ -4,17 +4,20 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.RemoteViews;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 
 public class FoodDynamicReceiver extends BroadcastReceiver {
 
     private static final String DYNAMIC_ACTION = "moe.nyamori.nutritionlistalter.fooddynamicfilter";
-    private static final String EXTRA_IS_SHOPPING_LIST_SHOWN = "moe.nyamori.nutritionlistalter.isshoppinglistshown";
+    private static final String WIDGET_DYNAMIC_ACTION = "moe.nyamori.nutritionlistalter.widgetfooddynamicfilter";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -40,6 +43,26 @@ public class FoodDynamicReceiver extends BroadcastReceiver {
 
             Notification notification = builder.build();
             manager.notify(0, notification);
+
+        } else if (intent.getAction().equals(WIDGET_DYNAMIC_ACTION)) {
+            Bundle bundle = intent.getExtras();
+
+            AppWidgetManager manager = AppWidgetManager.getInstance(context);
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.food_widget);
+            String foodName = bundle.getString("name");
+            String action = bundle.getString("action");
+            views.setTextViewText(R.id.widget_food_text, action + foodName);
+
+
+            Intent intentToDetail = FoodDetailActivity.newIntent(context, foodName);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
+                    intentToDetail, PendingIntent.FLAG_UPDATE_CURRENT);
+            views.setOnClickPendingIntent(R.id.widget_food_icon, pendingIntent); //设置点击事件
+
+            ComponentName componentName = new ComponentName(context, FoodWidget.class);
+            manager.updateAppWidget(componentName, views);
+
 
         }
     }
