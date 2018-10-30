@@ -42,6 +42,7 @@ public class FoodListActivity extends AppCompatActivity {
     private static final String EXTRA_IS_SHOPPING_LIST_SHOWN = "moe.nyamori.nutritionlistalter.isshoppinglistshown";
     private static final String STATIC_FILTER = "moe.nyamori.nutritionlistalter.foodstaticfilter";
     private static final String DYNAMIC_FILTER = "moe.nyamori.nutritionlistalter.fooddynamicfilter";
+    private static final String WIDGET_STATIC_FILTER = "moe.nyamori.nutritionlistalter.widgetstaticfilter";
 
 
     @Override

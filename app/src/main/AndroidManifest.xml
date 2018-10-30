@@ -14,10 +14,10 @@
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".FoodDetailActivity" />
 
         <receiver android:name=".FoodStaticReceiver">
@@ -25,13 +25,30 @@
                 <action android:name="moe.nyamori.nutritionlistalter.foodstaticfilter" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".FoodDynamicReceiver">
             <intent-filter>
                 <action android:name="moe.nyamori.nutritionlistalter.fooddynamicfilter" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".FoodWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
 
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/food_widget_info" />
+        </receiver>
+        <receiver android:name=".FoodWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="moe.nyamori.nutritionlistalter.widgetstaticfilter"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.AppWidgetProvider"
+                android:resource="@xml/food_widget_info"/>
+        </receiver>
     </application>
 
 </manifest>

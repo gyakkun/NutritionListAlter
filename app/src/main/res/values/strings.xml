@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">NutritionListAlter</string>
     <string name="food_name">食物名称</string>
+    <string name="appwidget_text">食物推荐</string>
+    <string name="appwidget_text_dummy">暂无推荐食物</string>
+    <string name="add_widget">Add widget</string>
 </resources>
