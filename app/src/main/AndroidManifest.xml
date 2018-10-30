@@ -9,21 +9,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FoodListActivity"
+        <activity
+            android:name=".FoodListActivity"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".FoodDetailActivity" />
+
         <receiver android:name=".FoodStaticReceiver">
             <intent-filter>
-                <action android:name="moe.nyamori.nutritionlistalter.foodstaticfilter"/>
+                <action android:name="moe.nyamori.nutritionlistalter.foodstaticfilter" />
             </intent-filter>
-
         </receiver>
-        <activity android:name=".FoodDetailActivity"></activity>
+
+        <receiver android:name=".FoodDynamicReceiver">
+            <intent-filter>
+                <action android:name="moe.nyamori.nutritionlistalter.fooddynamicfilter" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

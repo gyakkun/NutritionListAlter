@@ -18,6 +18,8 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -91,6 +93,18 @@ public class FoodDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (FoodListActivity.addFoodToCart(mFood.getName())) {
+
+                    EventBus.getDefault().post(new MessageEvent(mFood.getName()));
+
+                    Intent intentBroadcast = new Intent();
+                    intentBroadcast.setAction(DYNAMIC_FILTER);
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString("name", mFood.getName());
+
+                    intentBroadcast.putExtras(bundle);
+                    sendBroadcast(intentBroadcast);
+
                     Toast.makeText(getApplicationContext(),
                             mFood.getName() + " 已经加入购物车",
                             Toast.LENGTH_SHORT).show();

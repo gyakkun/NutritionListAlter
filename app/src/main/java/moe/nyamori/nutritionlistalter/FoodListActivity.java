@@ -1,6 +1,7 @@
 package moe.nyamori.nutritionlistalter;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
@@ -32,9 +33,10 @@ public class FoodListActivity extends AppCompatActivity {
     private ShoppingListFoodAdapter mShoppingListAdapter;
     private static List<Food> mAllFoods;
     private static List<Food> mShoppingListFoods;
-    private boolean mIsShoppingListShown;
+    public static boolean mIsShoppingListShown;
     private FloatingActionButton mFab;
 
+    private static final String EXTRA_IS_SHOPPING_LIST_SHOWN = "moe.nyamori.nutritionlistalter.isshoppinglistshown";
     private static final String STATIC_FILTER = "moe.nyamori.nutritionlistalter.foodstaticfilter";
     private static final String DYNAMIC_FILTER = "moe.nyamori.nutritionlistalter.fooddynamicfilter";
 
@@ -43,7 +45,7 @@ public class FoodListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_list);
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
 
         mAllFoods = new ArrayList<>();
         mShoppingListFoods = new ArrayList<>();
@@ -57,9 +59,14 @@ public class FoodListActivity extends AppCompatActivity {
 
         List<Food> foodStore = FoodStore.get(FoodListActivity.this).getFoods();
 
+        //Add all food from food store
         for (int ctr = 0; ctr < foodStore.size(); ctr++) {
             mAllFoods.add(foodStore.get(ctr));
         }
+
+        //Add a dummy item for cart
+        mShoppingListFoods.add(new Food("收藏夹", "*", "", "#FFFFFF"));
+
 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +78,8 @@ public class FoodListActivity extends AppCompatActivity {
 
         updateUI();
 
+        //Static Broadcast, randomly select a food name to send
+
         Intent intentBroadcast = new Intent(STATIC_FILTER);
         Random r = new Random();
         int randChoice = r.nextInt(10);
@@ -79,8 +88,8 @@ public class FoodListActivity extends AppCompatActivity {
         bundle.putString("name", foodStore.get(randChoice).getName());
         intentBroadcast.putExtras(bundle);
 
-        intentBroadcast.setComponent(new ComponentName(getPackageName(),
-                getPackageName() + ".foodstaticreceiver"));
+//        intentBroadcast.setComponent(new ComponentName(getPackageName(),
+//                getPackageName() + ".foodstaticreceiver"));
 
         sendBroadcast(intentBroadcast);
 
@@ -89,6 +98,12 @@ public class FoodListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        updateUI();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         updateUI();
     }
 
@@ -273,5 +288,13 @@ public class FoodListActivity extends AppCompatActivity {
 
         mShoppingListFoods.add(FoodStore.get(new FoodListActivity()).getFood(foodName));
         return true;
+    }
+
+    public static Intent newIntentToList(Context packageContext, boolean isShoppingListShown){
+        Intent intent = new Intent(packageContext, FoodListActivity.class);
+
+        mIsShoppingListShown = isShoppingListShown;
+
+        return intent;
     }
 }
