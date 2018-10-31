@@ -54,10 +54,10 @@ public class FoodDynamicReceiver extends BroadcastReceiver {
             views.setTextViewText(R.id.widget_food_text, action + foodName);
 
 
-            Intent intentToDetail = FoodDetailActivity.newIntent(context, foodName);
+            Intent intentToList = FoodListActivity.newIntentToList(context, true);
 
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
-                    intentToDetail, PendingIntent.FLAG_UPDATE_CURRENT);
+                    intentToList, PendingIntent.FLAG_UPDATE_CURRENT);
             views.setOnClickPendingIntent(R.id.widget_food_icon, pendingIntent); //设置点击事件
 
             ComponentName componentName = new ComponentName(context, FoodWidget.class);
